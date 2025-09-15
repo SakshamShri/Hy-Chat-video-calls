@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.str-chat__channel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #b9ceb9, #b7ecbb);
+  height: 100%;
+}
+
+.str-chat__container {
+  max-width: 13600px;
+  width: 100%;
+  height: 100% !important;
+  margin: 0 auto !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(12, 12, 12, 0.05);
+  overflow: hidden;
+}
+
+.str-chat__list {
+  background-color: #f8d4d4;
+  padding: 12px;
+}
+
+.str-chat__list-notifications {
+  display: none;
+}
+
+.str-chat__message-input {
+  border-top: 1px solid #bd5050;
+  background-color: #f5e9e9;
+}
+
+/* Custom styling for Stream Chat typing indicator */
+.str-chat__typing-indicator {
+  font-size: 0.75rem !important;
+  /* 12px */
+}
+
+.str-chat__typing-indicator__text {
+  font-size: 0.75rem !important;
+  background-color: #f8d4d4;
+  /* 12px */
+}
