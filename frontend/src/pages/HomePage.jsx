@@ -5,7 +5,10 @@ import {
   getRecommendedUsers,
   getUserFriends,
   sendFriendRequest,
+  getStreamToken,
 } from "../lib/api";
+import { StreamChat } from "stream-chat";
+import useAuthUser from "../hooks/useAuthUser";
 import { Link } from "react-router";
 import {
   CheckCircleIcon,
@@ -19,9 +22,16 @@ import { capitialize } from "../lib/utils";
 import FriendCard, { getLanguageFlag, getSingerFlag } from "../components/FriendCard";
 import NoFriendsFound from "../components/NoFriendsFound";
 
+const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
+
 const HomePage = () => {
   const queryClient = useQueryClient();
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
+  const [streamClient, setStreamClient] = useState(null);
+  const [unreadCounts, setUnreadCounts] = useState({});
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
+  
+  const { authUser } = useAuthUser();
 
   const { data: friends = [], isLoading: loadingFriends } = useQuery({
     queryKey: ["friends"],
@@ -38,11 +48,129 @@ const HomePage = () => {
     queryFn: getOutgoingFriendReqs,
   });
 
+  const { data: tokenData } = useQuery({
+    queryKey: ["streamToken"],
+    queryFn: getStreamToken,
+    enabled: !!authUser,
+  });
+
   const { mutate: sendRequestMutation, isPending } = useMutation({
     mutationFn: sendFriendRequest,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] }),
   });
+
+  // Initialize Stream Chat client and get unread counts
+  useEffect(() => {
+    const initStreamClient = async () => {
+      if (!tokenData?.token || !authUser || !friends.length) return;
+
+      try {
+        const client = StreamChat.getInstance(STREAM_API_KEY);
+        await client.connectUser(
+          {
+            id: authUser._id,
+            name: authUser.fullName,
+            image: authUser.profilePic,
+          },
+          tokenData.token
+        );
+
+        setStreamClient(client);
+
+        // Get unread counts for each friend using Stream Chat's built-in functionality
+        const counts = {};
+        
+        // Query all channels for this user
+        const filter = { 
+          type: 'messaging', 
+          members: { $in: [authUser._id] } 
+        };
+        const sort = { last_message_at: -1 };
+        const channels = await client.queryChannels(filter, sort);
+
+        // Calculate unread counts for each friend
+        for (const channel of channels) {
+          const otherMembers = Object.keys(channel.state.members).filter(id => id !== authUser._id);
+          if (otherMembers.length === 1) {
+            const friendId = otherMembers[0];
+            const unreadCount = channel.countUnread() || 0;
+            counts[friendId] = unreadCount;
+          }
+        }
+        
+        setUnreadCounts(counts);
+
+        // Get initial online status for friends
+        const friendIds = friends.map(friend => friend._id);
+        const onlineStatuses = await client.queryUsers(
+          { id: { $in: friendIds } },
+          { id: 1 },
+          { presence: true }
+        );
+        
+        const onlineSet = new Set();
+        onlineStatuses.users.forEach(user => {
+          if (user.online) {
+            onlineSet.add(user.id);
+          }
+        });
+        setOnlineUsers(onlineSet);
+
+        // Listen for user presence changes
+        client.on('user.presence.changed', (event) => {
+          const userId = event.user.id;
+          if (friendIds.includes(userId)) {
+            setOnlineUsers(prev => {
+              const newSet = new Set(prev);
+              if (event.user.online) {
+                newSet.add(userId);
+              } else {
+                newSet.delete(userId);
+              }
+              return newSet;
+            });
+          }
+        });
+
+        // Listen for new messages to update unread counts
+        client.on('message.new', (event) => {
+          if (event.user.id !== authUser._id) {
+            const senderId = event.user.id;
+            setUnreadCounts(prev => ({
+              ...prev,
+              [senderId]: (prev[senderId] || 0) + 1
+            }));
+          }
+        });
+
+        // Listen for message read events to update counts
+        client.on('message.read', (event) => {
+          if (event.user.id === authUser._id) {
+            const channelMembers = Object.keys(event.channel.state.members);
+            const otherMember = channelMembers.find(id => id !== authUser._id);
+            if (otherMember) {
+              setUnreadCounts(prev => ({
+                ...prev,
+                [otherMember]: 0
+              }));
+            }
+          }
+        });
+      } catch (error) {
+        console.error("Error initializing Stream client:", error);
+      }
+    };
+
+    initStreamClient();
+
+    // Cleanup function
+    return () => {
+      if (streamClient) {
+        streamClient.disconnectUser();
+      }
+    };
+  }, [tokenData, authUser, friends]);
 
   useEffect(() => {
     const outgoingIds = new Set();
@@ -76,7 +204,12 @@ const HomePage = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {friends.map((friend) => (
-              <FriendCard key={friend._id} friend={friend} />
+              <FriendCard 
+                key={friend._id} 
+                friend={friend} 
+                unreadCount={unreadCounts[friend._id] || 0}
+                isOnline={onlineUsers.has(friend._id)}
+              />
             ))}
           </div>
         )}
@@ -149,6 +282,11 @@ const HomePage = () => {
                           {getSingerFlag(user.learningLang)}
                           Fav. SNG: {capitialize(user.learningLang)}
                         </span>
+                        {unreadCounts[user._id] > 0 && (
+                          <span className="badge badge-error">
+                            Unread: {unreadCounts[user._id]}
+                          </span>
+                        )}
                       </div>
 
                       {user.bio && (

@@ -94,6 +94,18 @@ const ChatPage = () => {
     }
   };
 
+  const handleAudioCall = () => {
+    if (channel) {
+      const callUrl = `${window.location.origin}/audio-call/${channel.id}`;
+
+      channel.sendMessage({
+        text: `I've started an audio call. Join me here: ${callUrl}`,
+      });
+
+      toast.success("Audio call link sent successfully!");
+    }
+  };
+
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
@@ -101,7 +113,7 @@ const ChatPage = () => {
       <Chat client={chatClient}>
         <Channel channel={channel}>
           <div className="w-full relative">
-            <CallButton handleVideoCall={handleVideoCall} />
+            <CallButton handleVideoCall={handleVideoCall} handleAudioCall={handleAudioCall} />
             <Window>
               <ChannelHeader />
               <MessageList />

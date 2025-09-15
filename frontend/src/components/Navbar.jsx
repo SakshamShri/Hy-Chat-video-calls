@@ -7,7 +7,7 @@ import useLogout from "../hooks/useLogout";
 const Navbar = ({ showSidebar, toggleSidebar }) => {
   const { authUser } = useAuthUser();
   const location = useLocation();
-  const isChatPage = location.pathname?.startsWith("/chat");
+  const isChatPage = location.pathname?.startsWith("/chat") || location.pathname?.startsWith("/group-chat");
 
   // const queryClient = useQueryClient();
   // const { mutate: logoutMutation } = useMutation({

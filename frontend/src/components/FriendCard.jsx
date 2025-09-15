@@ -1,16 +1,32 @@
 import { Link } from "react-router";
 import { LANGUAGE_TO_FLAG, SINGER_TO_FLAG } from "../constants";
 
-const FriendCard = ({ friend }) => {
+const FriendCard = ({ friend, unreadCount = 0, isOnline = false }) => {
   return (
-    <div className="card bg-base-200 hover:shadow-md transition-shadow">
+    <div className="card bg-base-200 hover:shadow-md transition-shadow relative">
       <div className="card-body p-4">
+        {/* Unread count badge - positioned at top right */}
+        {unreadCount > 0 && (
+          <Link 
+            to={`/chat/${friend._id}`}
+            className="absolute -top-2 -right-2 bg-error text-error-content text-xs font-bold rounded-full px-2 py-1 min-w-fit flex items-center justify-center shadow-lg whitespace-nowrap hover:bg-error-focus transition-colors cursor-pointer"
+          >
+            Unread msg
+          </Link>
+        )}
+        
         {/* USER INFO */}
         <div className="flex items-center gap-3 mb-3">
-          <div className="avatar size-12">
+          <div className="avatar size-12 relative">
             <img src={friend.profilePic} alt={friend.fullName} />
+            {/* Online status indicator */}
+            {isOnline && (
+              <div className="absolute bottom-0 right-0 bg-success rounded-full h-3 w-3 border-2 border-base-200"></div>
+            )}
           </div>
-          <h3 className="font-semibold text-sm truncate">{friend.fullName}</h3>
+          <div className="flex-1">
+            <h3 className="font-semibold text-sm truncate">{friend.fullName}</h3>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-1.5 mb-3">

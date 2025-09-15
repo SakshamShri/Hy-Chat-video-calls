@@ -5,9 +5,12 @@ import PageLoader from "./components/PageLoader.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import NotificationPage from "./pages/NotificationPage.jsx";
 import FriendsPage from "./pages/FriendsPage.jsx";
+import GroupsPage from "./pages/GroupsPage.jsx";
+import GroupChatPage from "./pages/GroupChatPage.jsx";
 import SearchPage from "./pages/SearchPage.jsx";
 import OnBoardingPage from "./pages/OnBoardingPage.jsx";
 import CallPage from "./pages/CallPage.jsx";
+import OnlyCallPage from "./pages/OnlyCallPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
@@ -66,6 +69,18 @@ const App = () => {
           }
         />
         <Route
+          path="/groups"
+          element={
+            <Layout showSidebar={true}>
+              {isAuthenticated && isOnboarded ? (
+                <GroupsPage />
+              ) : (
+                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              )}
+            </Layout>
+          }
+        />
+        <Route
           path="/search"
           element={
             <Layout showSidebar={true}>
@@ -114,11 +129,33 @@ const App = () => {
           }
         />
         <Route
+          path="/audio-call/:id"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <OnlyCallPage />
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
           path="/chat/:id"
           element={
             isAuthenticated && isOnboarded ? (
               <Layout showSidebar={false}>
                 <ChatPage />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/group-chat/:id"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={false}>
+                <GroupChatPage />
               </Layout>
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
