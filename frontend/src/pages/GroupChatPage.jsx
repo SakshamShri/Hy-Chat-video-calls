@@ -105,7 +105,6 @@ const GroupChatPage = () => {
         const currChannel = client.channel("messaging", channelId, {
           name: groupData.name,
           members: memberIds,
-          created_by_id: groupData.admin._id,
           image: "https://via.placeholder.com/100x100?text=" + groupData.name.charAt(0),
         });
 
