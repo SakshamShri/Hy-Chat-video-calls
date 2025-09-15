@@ -18,7 +18,6 @@ import toast from "react-hot-toast";
 
 import ChatLoader from "../components/ChatLoader";
 import GroupChannelHeader from "../components/GroupChannelHeader";
-import CallButton from "../components/CallButton";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -150,20 +149,23 @@ const GroupChatPage = () => {
   if (loading || groupsLoading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-[91vh] flex flex-col">
-      <GroupChannelHeader groupData={groupData} />
-      <Chat client={chatClient}>
-        <Channel channel={channel}>
-          <div className="w-full relative">
-            <CallButton handleVideoCall={handleVideoCall} handleAudioCall={handleAudioCall} />
+    <div className="h-[91vh] flex flex-col overflow-hidden">
+      <GroupChannelHeader 
+        groupData={groupData} 
+        handleVideoCall={handleVideoCall} 
+        handleAudioCall={handleAudioCall} 
+      />
+      <div className="flex-1 overflow-hidden">
+        <Chat client={chatClient}>
+          <Channel channel={channel}>
             <Window>
               <MessageList />
               <MessageInput focus />
             </Window>
-          </div>
-          <Thread />
-        </Channel>
-      </Chat>
+            <Thread />
+          </Channel>
+        </Chat>
+      </div>
     </div>
   );
 };

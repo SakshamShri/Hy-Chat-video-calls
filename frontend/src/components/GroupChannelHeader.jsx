@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Users, Video, Phone } from "lucide-react";
 
-const GroupChannelHeader = ({ groupData }) => {
+const GroupChannelHeader = ({ groupData, handleVideoCall, handleAudioCall }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+    <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
       <button 
         onClick={(e) => {
           e.preventDefault();
@@ -33,6 +33,22 @@ const GroupChannelHeader = ({ groupData }) => {
           <Users size={12} />
           <span>{groupData?.members?.length}</span>
         </div>
+      </div>
+      
+      {/* Call Buttons */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleAudioCall}
+          className="btn btn-info btn-sm text-white"
+        >
+          <Phone size={16} />
+        </button>
+        <button
+          onClick={handleVideoCall}
+          className="btn btn-success btn-sm text-white"
+        >
+          <Video size={16} />
+        </button>
       </div>
     </div>
   );
