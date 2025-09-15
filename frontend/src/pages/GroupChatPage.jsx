@@ -41,24 +41,37 @@ const GroupChatPage = () => {
   });
 
   // Fetch user's groups from backend
-  const { data: userGroups = [], isLoading: groupsLoading } = useQuery({
+  const { data: userGroups = [], isLoading: groupsLoading, refetch: refetchGroups } = useQuery({
     queryKey: ['groups'],
     queryFn: getUserGroups,
-    enabled: !!authUser
+    enabled: !!authUser,
+    refetchOnWindowFocus: true,
+    staleTime: 0 // Always refetch to get latest group membership
   });
 
   // Get group data from backend API
   useEffect(() => {
-    if (authUser && groupId && userGroups.length > 0) {
-      const group = userGroups.find(g => g._id === groupId);
-      if (group) {
-        setGroupData(group);
-      } else {
-        toast.error("Group not found");
-        navigate("/groups");
+    if (authUser && groupId) {
+      if (userGroups.length > 0) {
+        const group = userGroups.find(g => g._id === groupId);
+        if (group) {
+          setGroupData(group);
+        } else {
+          // If group not found in user's groups, refetch to check for new membership
+          console.log("Group not found in user's groups, refetching...");
+          refetchGroups().then((result) => {
+            const updatedGroup = result.data?.find(g => g._id === groupId);
+            if (updatedGroup) {
+              setGroupData(updatedGroup);
+            } else {
+              toast.error("You are not a member of this group");
+              navigate("/groups");
+            }
+          });
+        }
       }
     }
-  }, [authUser, groupId, userGroups, navigate]);
+  }, [authUser, groupId, userGroups, navigate, refetchGroups]);
 
   useEffect(() => {
     const initGroupChat = async () => {
