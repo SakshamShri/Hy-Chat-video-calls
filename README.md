@@ -1,4 +1,4 @@
-# 🌟 Hi-Chat
+# 🌟 Hy-Chat
 
 A modern, real-time chat application with video calling capabilities, built for language learners and music enthusiasts to connect and share their passions.
 
