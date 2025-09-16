@@ -2,6 +2,9 @@
 
 A modern, real-time chat application with video calling capabilities, built for language learners and music enthusiasts to connect and share their passions.
 
+## 🌐 Live Demo
+**[Try Hy-Chat Live](https://hy-chat-video-calls.onrender.com)** - Experience the app in action!
+
 ![Hi-Chat Banner](https://via.placeholder.com/800x400/4F46E5/FFFFFF?text=Hi-Chat+-+Connect+Through+Music+%26+Language)
 
 ## ✨ Features
