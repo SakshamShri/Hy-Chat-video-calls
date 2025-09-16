@@ -48,7 +48,7 @@ const OnboardingPage = () => {
     const randomAvatar = `/${idx}.png`;
 
     setFormState({ ...formState, profilePic: randomAvatar });
-    toast.success("Random profile picture generated!");
+    toast.success("Generated!");
   };
 
   return (
@@ -146,8 +146,8 @@ const OnboardingPage = () => {
                 >
                   <option value="">Select your native language</option>
                   {LANGUAGES.map((lang) => (
-                    <option key={`native-${lang}`} value={lang.toLowerCase()}>
-                      {lang}
+                    <option key={`native-${lang.code}`} value={lang.code}>
+                      {lang.name}
                     </option>
                   ))}
                 </select>

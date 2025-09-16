@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, MapPin, Globe, MessageCircle, Camera, Save, X } from 'lucide-react';
+import { Edit, MapPin, Globe, MessageCircle, Camera, Save, X, ShuffleIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import useAuthUser from '../hooks/useAuthUser';
@@ -84,6 +84,17 @@ const ProfilePage = () => {
     setIsEditing(false);
   };
 
+  const handleRandomAvatar = () => {
+    const idx = Math.floor(Math.random() * 100) + 1; // 1-100 included
+    const randomAvatar = `/${idx}.png`;
+    
+    setFormData(prev => ({
+      ...prev,
+      profilePic: randomAvatar
+    }));
+    toast.success("Generated!");
+  };
+
   if (isLoading) return <PageLoader />;
 
   if (!authUser) {
@@ -92,11 +103,11 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-base-100 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-base-100 py-4 sm:py-8">
+      <div className="max-w-4xl mx-auto px-2 sm:px-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-xl font-bold text-base-content">My Profile</h1>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h1 className="text-lg sm:text-xl font-bold text-base-content">My Profile</h1>
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
@@ -106,35 +117,37 @@ const ProfilePage = () => {
               Edit Profile
             </button>
           ) : (
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2">
               <button
                 onClick={handleSave}
                 disabled={isPending}
-                className="btn btn-success btn-sm gap-2"
+                className="btn btn-success btn-xs sm:btn-sm gap-1 sm:gap-2"
               >
-                <Save size={16} />
-                {isPending ? 'Saving...' : 'Save'}
+                <Save size={14} className="sm:size-4" />
+                <span className="hidden sm:inline">{isPending ? 'Saving...' : 'Save'}</span>
+                <span className="sm:hidden">{isPending ? '...' : 'Save'}</span>
               </button>
               <button
                 onClick={handleCancel}
-                className="btn btn-ghost btn-sm gap-2"
+                className="btn btn-ghost btn-xs sm:btn-sm gap-1 sm:gap-2"
               >
-                <X size={16} />
-                Cancel
+                <X size={14} className="sm:size-4" />
+                <span className="hidden sm:inline">Cancel</span>
+                <span className="sm:hidden">×</span>
               </button>
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Profile Card */}
           <div className="lg:col-span-1">
             <div className="card bg-base-200 shadow-xl">
-              <div className="card-body items-center text-center">
+              <div className="card-body p-4 sm:p-6 items-center text-center">
                 {/* Profile Picture */}
                 <div className="relative">
                   <div className="avatar">
-                    <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                       <img 
                         src={isEditing ? formData.profilePic : authUser.profilePic} 
                         alt="Profile" 
@@ -144,8 +157,8 @@ const ProfilePage = () => {
                   </div>
                   {isEditing && (
                     <div className="absolute bottom-0 right-0">
-                      <button className="btn btn-circle btn-sm btn-primary">
-                        <Camera size={16} />
+                      <button className="btn btn-circle btn-xs sm:btn-sm btn-primary">
+                        <Camera size={12} className="sm:size-4" />
                       </button>
                     </div>
                   )}
@@ -158,11 +171,11 @@ const ProfilePage = () => {
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className="input input-bordered w-full text-center text-xl font-bold"
+                    className="input input-bordered w-full text-center text-lg sm:text-xl font-bold"
                     placeholder="Full Name"
                   />
                 ) : (
-                  <h2 className="text-lg font-bold text-base-content">
+                  <h2 className="text-base sm:text-lg font-bold text-base-content">
                     {authUser.fullName}
                   </h2>
                 )}
@@ -174,20 +187,20 @@ const ProfilePage = () => {
                 </div>
 
                 {/* Bio */}
-                <div className="w-full mt-4">
+                <div className="w-full mt-3 sm:mt-4">
                   <label className="label">
-                    <span className="label-text text-sm font-medium">Bio</span>
+                    <span className="label-text text-xs sm:text-sm font-medium">Bio</span>
                   </label>
                   {isEditing ? (
                     <textarea
                       name="bio"
                       value={formData.bio}
                       onChange={handleInputChange}
-                      className="textarea textarea-bordered w-full h-24 resize-none"
+                      className="textarea textarea-bordered w-full h-20 sm:h-24 resize-none text-sm"
                       placeholder="Tell us about yourself..."
                     />
                   ) : (
-                    <p className="text-base-content/70 text-sm leading-relaxed">
+                    <p className="text-base-content/70 text-xs sm:text-sm leading-relaxed">
                       {authUser.bio || "No bio added yet."}
                     </p>
                   )}
@@ -199,15 +212,15 @@ const ProfilePage = () => {
           {/* Details Section */}
           <div className="lg:col-span-2">
             <div className="card bg-base-200 shadow-xl">
-              <div className="card-body">
-                <h3 className="card-title text-lg mb-4">Profile Details</h3>
+              <div className="card-body p-4 sm:p-6">
+                <h3 className="card-title text-base sm:text-lg mb-3 sm:mb-4">Profile Details</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   {/* Location */}
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text text-sm font-medium flex items-center gap-2">
-                        <MapPin size={16} />
+                      <span className="label-text text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+                        <MapPin size={14} className="sm:size-4" />
                         Location
                       </span>
                     </label>
@@ -217,12 +230,12 @@ const ProfilePage = () => {
                         name="location"
                         value={formData.location}
                         onChange={handleInputChange}
-                        className="input input-bordered"
+                        className="input input-bordered input-sm sm:input-md text-sm"
                         placeholder="Your location"
                       />
                     ) : (
-                      <div className="p-3 bg-base-100 rounded-lg">
-                        <p className="text-sm text-base-content">
+                      <div className="p-2 sm:p-3 bg-base-100 rounded-lg">
+                        <p className="text-xs sm:text-sm text-base-content">
                           {authUser.location || "Not specified"}
                         </p>
                       </div>
@@ -232,8 +245,8 @@ const ProfilePage = () => {
                   {/* Native Language */}
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text text-sm font-medium flex items-center gap-2">
-                        <Globe size={16} />
+                      <span className="label-text text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+                        <Globe size={14} className="sm:size-4" />
                         Native Language
                       </span>
                     </label>
@@ -242,7 +255,7 @@ const ProfilePage = () => {
                         name="nativeLang"
                         value={formData.nativeLang}
                         onChange={handleInputChange}
-                        className="select select-bordered"
+                        className="select select-bordered select-sm sm:select-md text-sm"
                       >
                         <option value="">Select language</option>
                         {LANGUAGES.map((lang) => (
@@ -252,8 +265,8 @@ const ProfilePage = () => {
                         ))}
                       </select>
                     ) : (
-                      <div className="p-3 bg-base-100 rounded-lg">
-                        <p className="text-sm text-base-content flex items-center gap-2">
+                      <div className="p-2 sm:p-3 bg-base-100 rounded-lg">
+                        <p className="text-xs sm:text-sm text-base-content flex items-center gap-2">
                           {getLanguageFlag(authUser.nativeLang)}
                           {LANGUAGES.find(lang => lang.code === authUser.nativeLang)?.name || "Not specified"}
                         </p>
@@ -264,8 +277,8 @@ const ProfilePage = () => {
                   {/* Learning Language */}
                   <div className="form-control">
                     <label className="label">
-                      <span className="label-text text-sm font-medium flex items-center gap-2">
-                        <MessageCircle size={16} />
+                      <span className="label-text text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2">
+                        <MessageCircle size={14} className="sm:size-4" />
                         Fav. SNG
                       </span>
                     </label>
@@ -274,7 +287,7 @@ const ProfilePage = () => {
                         name="learningLang"
                         value={formData.learningLang}
                         onChange={handleInputChange}
-                        className="select select-bordered"
+                        className="select select-bordered select-sm sm:select-md text-sm"
                       >
                         <option value="">Select singer</option>
                         {SINGERS.map((singer) => (
@@ -284,8 +297,8 @@ const ProfilePage = () => {
                         ))}
                       </select>
                     ) : (
-                      <div className="p-3 bg-base-100 rounded-lg">
-                        <p className="text-sm text-base-content flex items-center gap-2">
+                      <div className="p-2 sm:p-3 bg-base-100 rounded-lg">
+                        <p className="text-xs sm:text-sm text-base-content flex items-center gap-2">
                           {getSingerFlag(authUser.learningLang)}
                           {authUser.learningLang || "Not specified"}
                         </p>
@@ -293,38 +306,39 @@ const ProfilePage = () => {
                     )}
                   </div>
 
-                  {/* Profile Picture URL (only in edit mode) */}
+                  {/* Profile Picture Generator (only in edit mode) */}
                   {isEditing && (
                     <div className="form-control md:col-span-2">
                       <label className="label">
-                        <span className="label-text text-sm font-medium">Profile Picture URL</span>
+                        <span className="label-text text-sm font-medium">Profile Picture</span>
                       </label>
-                      <input
-                        type="url"
-                        name="profilePic"
-                        value={formData.profilePic}
-                        onChange={handleInputChange}
-                        className="input input-bordered"
-                        placeholder="https://example.com/your-photo.jpg"
-                      />
+                      <button
+                        type="button"
+                        onClick={handleRandomAvatar}
+                        className="btn btn-outline btn-primary btn-sm sm:btn-md gap-1 sm:gap-2 text-xs sm:text-sm"
+                      >
+                        <ShuffleIcon className="size-3 sm:size-4" />
+                        <span className="hidden sm:inline">Generate Random Avatar</span>
+                        <span className="sm:hidden">Generate Avatar</span>
+                      </button>
                     </div>
                   )}
                 </div>
 
                 {/* Account Info */}
-                <div className="divider mt-8"></div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="divider mt-6 sm:mt-8"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <h4 className="font-medium text-sm text-base-content mb-2">Account Status</h4>
+                    <h4 className="font-medium text-xs sm:text-sm text-base-content mb-2">Account Status</h4>
                     <div className="flex items-center gap-2">
-                      <div className={`badge ${authUser.isOnboarded ? 'badge-success' : 'badge-warning'}`}>
+                      <div className={`badge badge-sm sm:badge-md ${authUser.isOnboarded ? 'badge-success' : 'badge-warning'}`}>
                         {authUser.isOnboarded ? 'Complete' : 'Incomplete'}
                       </div>
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-medium text-sm text-base-content mb-2">Member Since</h4>
-                    <p className="text-sm text-base-content/70">
+                    <h4 className="font-medium text-xs sm:text-sm text-base-content mb-2">Member Since</h4>
+                    <p className="text-xs sm:text-sm text-base-content/70">
                       {new Date(authUser.createdAt).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',

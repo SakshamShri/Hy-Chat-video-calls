@@ -1,24 +1,22 @@
-import { Routes, Route } from "react-router";
-import { Navigate } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
+import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader.jsx";
 
 import HomePage from "./pages/HomePage.jsx";
-import NotificationPage from "./pages/NotificationPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import NotificationsPage from "./pages/NotificationPage.jsx";
+import CallPage from "./pages/CallPage.jsx";
+import ChatPage from "./pages/ChatPage.jsx";
+import OnboardingPage from "./pages/OnBoardingPage.jsx";
 import FriendsPage from "./pages/FriendsPage.jsx";
+import SearchPage from "./pages/SearchPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 import GroupsPage from "./pages/GroupsPage.jsx";
 import GroupChatPage from "./pages/GroupChatPage.jsx";
-import SearchPage from "./pages/SearchPage.jsx";
-import OnBoardingPage from "./pages/OnBoardingPage.jsx";
-import CallPage from "./pages/CallPage.jsx";
-import OnlyCallPage from "./pages/OnlyCallPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import SignUpPage from "./pages/SignUpPage.jsx";
-import ChatPage from "./pages/ChatPage.jsx";
-import ProfilePage from "./pages/ProfilePage.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import { useThemeStore } from "./store/useThemeStore.js";
 import Layout from "./components/Layout.jsx";
-
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
@@ -70,18 +68,6 @@ const App = () => {
           }
         />
         <Route
-          path="/groups"
-          element={
-            <Layout showSidebar={true}>
-              {isAuthenticated && isOnboarded ? (
-                <GroupsPage />
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )}
-            </Layout>
-          }
-        />
-        <Route
           path="/search"
           element={
             <Layout showSidebar={true}>
@@ -98,7 +84,31 @@ const App = () => {
           element={
             <Layout showSidebar={true}>
               {isAuthenticated && isOnboarded ? (
-                <NotificationPage />
+                <NotificationsPage />
+              ) : (
+                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              )}
+            </Layout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Layout showSidebar={true}>
+              {isAuthenticated && isOnboarded ? (
+                <ProfilePage />
+              ) : (
+                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              )}
+            </Layout>
+          }
+        />
+        <Route
+          path="/groups"
+          element={
+            <Layout showSidebar={true}>
+              {isAuthenticated && isOnboarded ? (
+                <GroupsPage />
               ) : (
                 <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
               )}
@@ -110,7 +120,7 @@ const App = () => {
           element={
             isAuthenticated ? (
               !isOnboarded ? (
-                <OnBoardingPage />
+                <OnboardingPage />
               ) : (
                 <Navigate to="/" />
               )
@@ -124,16 +134,6 @@ const App = () => {
           element={
             isAuthenticated && isOnboarded ? (
               <CallPage />
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
-        <Route
-          path="/audio-call/:id"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <OnlyCallPage />
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
             )
@@ -163,21 +163,17 @@ const App = () => {
             )
           }
         />
-        <Route
-          path="/profile"
-          element={
-            <Layout showSidebar={true}>
-              {isAuthenticated && isOnboarded ? (
-                <ProfilePage />
-              ) : (
-                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-              )}
-            </Layout>
-          }
-        />
       </Routes>
+      <Toaster 
+        toastOptions={{
+          style: {
+            fontSize: '14px',
+            padding: '8px 12px',
+            minHeight: '40px'
+          }
+        }}
+      />
     </div>
   );
 };
-
 export default App;
