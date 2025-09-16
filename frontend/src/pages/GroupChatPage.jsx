@@ -149,7 +149,7 @@ const GroupChatPage = () => {
   if (loading || groupsLoading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col overflow-hidden">
+    <div className="h-[calc(100dvh-4rem)] flex flex-col overflow-hidden">
       <GroupChannelHeader 
         groupData={groupData} 
         handleVideoCall={handleVideoCall} 
