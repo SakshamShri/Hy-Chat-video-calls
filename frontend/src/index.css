@@ -45,3 +45,11 @@
   background-color: #f8d4d4;
   /* 12px */
 }
+
+/* Prevent sidebar logo wrapping on mobile */
+@media (max-width: 768px) {
+  aside .flex.items-center.gap-2\.5 span {
+    white-space: nowrap !important;
+    font-size: 1.5rem !important;
+  }
+}
