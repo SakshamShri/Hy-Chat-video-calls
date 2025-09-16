@@ -56,7 +56,25 @@ export async function acceptFriendRequest(requestId) {
 };
 
 export async function getStreamToken() {
-  const response = await axiosInstance.get("/chat/token");
+  const response = await axiosInstance.get("/auth/stream-token");
+  return response.data;
+}
+
+// Profile API functions
+export async function getProfile() {
+  const response = await axiosInstance.get("/profile");
+  return response.data;
+}
+
+export async function updateProfile(profileData) {
+  console.log("API call - updateProfile with data:", profileData);
+  const response = await axiosInstance.put("/profile", profileData);
+  console.log("API response:", response);
+  return response.data;
+}
+
+export async function uploadProfilePicture(profilePicData) {
+  const response = await axiosInstance.put("/profile/picture", profilePicData);
   return response.data;
 }
 

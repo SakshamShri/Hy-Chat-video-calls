@@ -163,20 +163,20 @@ export const THEMES = [
 ];
 
 export const LANGUAGES = [
-  "English",
-  "Spanish",
-  "French",
-  "German",
-  "Mandarin",
-  "Japanese",
-  "Korean",
-  "Hindi",
-  "Russian",
-  "Portuguese",
-  "Arabic",
-  "Italian",
-  "Turkish",
-  "Dutch",
+  { code: "english", name: "English" },
+  { code: "spanish", name: "Spanish" },
+  { code: "french", name: "French" },
+  { code: "german", name: "German" },
+  { code: "mandarin", name: "Mandarin" },
+  { code: "japanese", name: "Japanese" },
+  { code: "korean", name: "Korean" },
+  { code: "hindi", name: "Hindi" },
+  { code: "russian", name: "Russian" },
+  { code: "portuguese", name: "Portuguese" },
+  { code: "arabic", name: "Arabic" },
+  { code: "italian", name: "Italian" },
+  { code: "turkish", name: "Turkish" },
+  { code: "dutch", name: "Dutch" },
 ];
 
 export const SINGERS = [

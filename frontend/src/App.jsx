@@ -14,6 +14,7 @@ import OnlyCallPage from "./pages/OnlyCallPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import { useThemeStore } from "./store/useThemeStore.js";
 import Layout from "./components/Layout.jsx";
@@ -160,6 +161,18 @@ const App = () => {
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
             )
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Layout showSidebar={true}>
+              {isAuthenticated && isOnboarded ? (
+                <ProfilePage />
+              ) : (
+                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              )}
+            </Layout>
           }
         />
       </Routes>

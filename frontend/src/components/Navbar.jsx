@@ -54,15 +54,15 @@ const Navbar = ({ showSidebar, toggleSidebar }) => {
           {/* TODO */}
           <ThemeSelector />
 
-          <div className="avatar">
-            <div className="w-9 rounded-full">
+          <Link to="/profile" className="avatar">
+            <div className="w-9 rounded-full hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all cursor-pointer">
               <img
                 src={authUser?.profilePic}
                 alt="User Avatar"
                 rel="noreferrer"
               />
             </div>
-          </div>
+          </Link>
 
           {/* Logout button */}
           <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
