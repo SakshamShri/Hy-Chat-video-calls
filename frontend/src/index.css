@@ -49,9 +49,11 @@
 /* Mobile-specific chat styling */
 @media (max-width: 768px) {
   .str-chat__container {
-    height: 98% !important;
+    height: 90% !important;
     max-width: 98% !important;
     margin: 0 !important;
+    position: relative !important;
+    top: 10% !important;
     border-radius: 0 !important;
   }
   
