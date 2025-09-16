@@ -20,7 +20,9 @@ const __dirname = path.resolve();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend URL
+    origin: process.env.NODE_ENV === "production" 
+      ? "https://hy-chat-video-calls.onrender.com" 
+      : "http://localhost:5173",
     credentials: true, // Allow cookies to be sent
   })
 );
