@@ -113,10 +113,12 @@ const ChatPage = () => {
       <Chat client={chatClient}>
         <Channel channel={channel}>
           <div className="w-full relative h-full flex flex-col max-w-full overflow-hidden">
-            <CallButton handleVideoCall={handleVideoCall} handleAudioCall={handleAudioCall} />
             <div className="flex-1 overflow-hidden max-w-full">
               <Window>
-                <ChannelHeader />
+                <div className="relative">
+                  <ChannelHeader />
+                  <CallButton handleVideoCall={handleVideoCall} handleAudioCall={handleAudioCall} />
+                </div>
                 <MessageList />
                 <MessageInput focus />
               </Window>
