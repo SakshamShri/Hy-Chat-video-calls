@@ -65,12 +65,12 @@
   }
   
   .str-chat__list {
-    padding: 8px !important;
+    padding: 0 !important;
     font-size: 0.875rem !important;
   }
   
   .str-chat__message-input {
-    padding: 8px !important;
+    padding: 4px !important;
   }
   
   .str-chat__message-input-inner {
