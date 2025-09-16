@@ -103,9 +103,22 @@ const GroupChatPage = () => {
         
         const currChannel = client.channel("messaging", channelId, {
           name: groupData.name,
-          members: memberIds,
           image: "https://via.placeholder.com/100x100?text=" + groupData.name.charAt(0),
         });
+
+        // Create or get the channel first
+        await currChannel.create();
+        
+        // Add all current group members to the channel
+        const currentMembers = await currChannel.queryMembers({});
+        const currentMemberIds = currentMembers.members.map(m => m.user_id);
+        
+        // Find members that need to be added
+        const membersToAdd = memberIds.filter(id => !currentMemberIds.includes(id));
+        
+        if (membersToAdd.length > 0) {
+          await currChannel.addMembers(membersToAdd);
+        }
 
         await currChannel.watch();
 
