@@ -14,6 +14,7 @@ import SearchPage from "./pages/SearchPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import GroupsPage from "./pages/GroupsPage.jsx";
 import GroupChatPage from "./pages/GroupChatPage.jsx";
+import MeetDeveloperPage from "./pages/MeetDeveloperPage.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import { useThemeStore } from "./store/useThemeStore.js";
 import Layout from "./components/Layout.jsx";
@@ -109,6 +110,18 @@ const App = () => {
             <Layout showSidebar={true}>
               {isAuthenticated && isOnboarded ? (
                 <GroupsPage />
+              ) : (
+                <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+              )}
+            </Layout>
+          }
+        />
+        <Route
+          path="/meet-developer"
+          element={
+            <Layout showSidebar={true}>
+              {isAuthenticated && isOnboarded ? (
+                <MeetDeveloperPage />
               ) : (
                 <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
               )}
