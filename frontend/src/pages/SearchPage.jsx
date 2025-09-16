@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { Search, UserPlus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getRecommendedUsers, sendFriendRequest } from "../lib/api";
+import { Search, UserPlus, Check } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRecommendedUsers, sendFriendRequest, getOutgoingFriendReqs } from "../lib/api";
+import toast from "react-hot-toast";
 import { LANGUAGE_TO_FLAG, SINGER_TO_FLAG } from "../constants";
 import { getLanguageFlag, getSingerFlag } from "../components/FriendCard";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const queryClient = useQueryClient();
 
   const {
     data: users = [],
@@ -16,6 +18,24 @@ const SearchPage = () => {
   } = useQuery({
     queryKey: ["recommendedUsers"],
     queryFn: getRecommendedUsers,
+  });
+
+  const {
+    data: outgoingRequests = [],
+  } = useQuery({
+    queryKey: ["outgoingFriendRequests"],
+    queryFn: getOutgoingFriendReqs,
+  });
+
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: sendFriendRequest,
+    onSuccess: () => {
+      toast.success("Friend request sent!");
+      queryClient.invalidateQueries({ queryKey: ["outgoingFriendRequests"] });
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to send friend request");
+    },
   });
 
   useEffect(() => {
@@ -49,14 +69,15 @@ const SearchPage = () => {
     return null;
   };
 
-  const handleSendFriendRequest = async (userId) => {
-    try {
-      await sendFriendRequest(userId);
-      // You might want to show a success message here
-    } catch (error) {
-      console.error("Failed to send friend request:", error);
-      // You might want to show an error message here
-    }
+  const handleSendFriendRequest = (userId) => {
+    sendFriendRequestMutation.mutate(userId);
+  };
+
+  const isRequestSent = (userId) => {
+    return outgoingRequests.some(request => 
+      (request.to && request.to._id === userId) || 
+      (request.recipient && request.recipient._id === userId)
+    );
   };
 
   if (isLoading) {
@@ -151,11 +172,23 @@ const SearchPage = () => {
                   {/* Action Button */}
                   <div className="flex gap-2">
                     <button
-                      className="btn btn-primary btn-sm w-full"
+                      className={`btn btn-sm w-full ${
+                        isRequestSent(user._id) ? "btn-disabled" : "btn-primary"
+                      }`}
                       onClick={() => handleSendFriendRequest(user._id)}
+                      disabled={isRequestSent(user._id) || sendFriendRequestMutation.isPending}
                     >
-                      <UserPlus className="size-4" />
-                      Add Friend
+                      {isRequestSent(user._id) ? (
+                        <>
+                          <Check className="size-4 mr-2" />
+                          Request Sent
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="size-4 mr-2" />
+                          {sendFriendRequestMutation.isPending ? "Sending..." : "Send Friend Request"}
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
