@@ -60,6 +60,11 @@ export async function getStreamToken() {
   return response.data;
 }
 
+export async function refreshStreamUser() {
+  const response = await axiosInstance.post("/auth/refresh-stream-user");
+  return response.data;
+}
+
 // Profile API functions
 export async function getProfile() {
   const response = await axiosInstance.get("/profile");

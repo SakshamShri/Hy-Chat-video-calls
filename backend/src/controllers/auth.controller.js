@@ -78,9 +78,14 @@ export async function login(req, res) {
   }
 };
 
-export function logout(req, res) {
-  res.clearCookie("token");
-  res.status(200).json({ success: true, message: "Logout successful" });
+export async function logout(req, res) {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 }
 
 export async function onboard(req, res, next){
@@ -130,6 +135,24 @@ export async function onboard(req, res, next){
           missingFields: missingFields
         });
     }
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
+// Refresh Stream user with admin role
+export async function refreshStreamUser(req, res) {
+  try {
+    const user = req.user;
+    
+    await upsertStreamUser({
+      id: user._id.toString(),
+      name: user.fullName,
+      image: user.profilePic || "",
+    });
+    
+    res.status(200).json({ message: "Stream user updated successfully" });
+  } catch (error) {
+    console.error("Error refreshing Stream user:", error);
+    res.status(500).json({ message: "Failed to refresh Stream user" });
   }
 }

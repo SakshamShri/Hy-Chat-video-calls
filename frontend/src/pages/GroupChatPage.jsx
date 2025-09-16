@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-import { useQuery } from "@tanstack/react-query";
-import { getStreamToken, getUserGroups } from "../lib/api";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getStreamToken, getUserGroups, refreshStreamUser } from "../lib/api";
 import { useThemeStore } from "../store/useThemeStore";
 
 import { StreamChat } from "stream-chat";
@@ -32,6 +32,17 @@ const GroupChatPage = () => {
 
   const { authUser } = useAuthUser();
   const { theme } = useThemeStore();
+
+  // Refresh Stream user mutation
+  const refreshStreamUserMutation = useMutation({
+    mutationFn: refreshStreamUser,
+    onSuccess: () => {
+      toast.success("Stream user updated! Please try joining the group chat again.");
+    },
+    onError: (error) => {
+      toast.error("Failed to update Stream user: " + error.message);
+    }
+  });
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
@@ -103,30 +114,22 @@ const GroupChatPage = () => {
         
         const currChannel = client.channel("messaging", channelId, {
           name: groupData.name,
+          members: memberIds,
           image: "https://via.placeholder.com/100x100?text=" + groupData.name.charAt(0),
         });
 
-        // Create or get the channel first
-        await currChannel.create();
-        
-        // Add all current group members to the channel
-        const currentMembers = await currChannel.queryMembers({});
-        const currentMemberIds = currentMembers.members.map(m => m.user_id);
-        
-        // Find members that need to be added
-        const membersToAdd = memberIds.filter(id => !currentMemberIds.includes(id));
-        
-        if (membersToAdd.length > 0) {
-          await currChannel.addMembers(membersToAdd);
-        }
-
+        // Watch the channel (creates if doesn't exist, updates members if it does)
         await currChannel.watch();
 
         setChatClient(client);
         setChannel(currChannel);
       } catch (error) {
         console.error("Error initializing group chat:", error);
-        toast.error("Could not connect to group chat. Please try again.");
+        if (error.message.includes("not allowed to perform action ReadChannel")) {
+          toast.error("Permission denied. Click 'Fix Permissions' to update your Stream user role.");
+        } else {
+          toast.error("Could not connect to group chat. Please try again.");
+        }
       } finally {
         setLoading(false);
       }
@@ -159,7 +162,33 @@ const GroupChatPage = () => {
     }
   };
 
-  if (loading || groupsLoading || !chatClient || !channel) return <ChatLoader />;
+  if (loading || groupsLoading) return <ChatLoader />;
+
+  // Show fix permissions button if there's an error
+  if (!chatClient || !channel) {
+    return (
+      <div className="h-[91vh] flex flex-col items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-4">Unable to connect to group chat</h2>
+          <p className="text-base-content/70 mb-6">There seems to be a permissions issue with your Stream account.</p>
+          <button 
+            onClick={() => refreshStreamUserMutation.mutate()}
+            className="btn btn-primary"
+            disabled={refreshStreamUserMutation.isPending}
+          >
+            {refreshStreamUserMutation.isPending ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Fixing Permissions...
+              </>
+            ) : (
+              "Fix Permissions"
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-[91vh] flex flex-col overflow-hidden">

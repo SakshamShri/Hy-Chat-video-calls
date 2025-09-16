@@ -14,8 +14,12 @@ const streamClient = StreamChat.getInstance(apiKey, apiSecret)
 
 export const upsertStreamUser = async (userData) => {
     try {
-        await streamClient.upsertUsers([userData])
-        return userData
+        const userWithRole = {
+            ...userData,
+            role: 'admin' // Give users admin role to allow channel creation and access
+        }
+        await streamClient.upsertUsers([userWithRole])
+        return userWithRole
     } catch (error) {
         console.error("Error creating/updating Stream user 1:", error)
         throw error
