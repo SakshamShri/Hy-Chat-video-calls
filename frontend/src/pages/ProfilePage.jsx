@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, MapPin, Globe, MessageCircle, Camera, Save, X, Shuffle } from 'lucide-react';
+import { Edit, MapPin, Globe, MessageCircle, Camera, Save, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import useAuthUser from '../hooks/useAuthUser';
@@ -84,17 +84,6 @@ const ProfilePage = () => {
     setIsEditing(false);
   };
 
-  const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1; // 1-100 included
-    const randomAvatar = `/${idx}.png`;
-    
-    setFormData(prev => ({
-      ...prev,
-      profilePic: randomAvatar
-    }));
-    toast.success("Random profile picture generated!");
-  };
-
   if (isLoading) return <PageLoader />;
 
   if (!authUser) {
@@ -145,32 +134,18 @@ const ProfilePage = () => {
                 {/* Profile Picture */}
                 <div className="relative">
                   <div className="avatar">
-                    <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-                      {(isEditing ? formData.profilePic : authUser.profilePic) ? (
-                        <img 
-                          src={isEditing ? formData.profilePic : authUser.profilePic} 
-                          alt="Profile" 
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.src = '/1.png';
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-base-300 flex items-center justify-center">
-                          <Camera size={32} className="text-base-content/40" />
-                        </div>
-                      )}
+                    <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                      <img 
+                        src={isEditing ? formData.profilePic : authUser.profilePic} 
+                        alt="Profile" 
+                        className="rounded-full object-cover"
+                      />
                     </div>
                   </div>
                   {isEditing && (
                     <div className="absolute bottom-0 right-0">
-                      <button 
-                        type="button"
-                        onClick={handleRandomAvatar}
-                        className="btn btn-circle btn-sm btn-primary"
-                        title="Generate Random Avatar"
-                      >
-                        <Shuffle size={16} />
+                      <button className="btn btn-circle btn-sm btn-primary">
+                        <Camera size={16} />
                       </button>
                     </div>
                   )}
@@ -318,22 +293,20 @@ const ProfilePage = () => {
                     )}
                   </div>
 
-                  {/* Profile Picture Section (only in edit mode) */}
+                  {/* Profile Picture URL (only in edit mode) */}
                   {isEditing && (
                     <div className="form-control md:col-span-2">
                       <label className="label">
-                        <span className="label-text text-sm font-medium">Profile Picture</span>
+                        <span className="label-text text-sm font-medium">Profile Picture URL</span>
                       </label>
-                      <div className="flex justify-center">
-                        <button
-                          type="button"
-                          onClick={handleRandomAvatar}
-                          className="btn btn-accent gap-2"
-                        >
-                          <Shuffle size={16} />
-                          Generate Random Avatar
-                        </button>
-                      </div>
+                      <input
+                        type="url"
+                        name="profilePic"
+                        value={formData.profilePic}
+                        onChange={handleInputChange}
+                        className="input input-bordered"
+                        placeholder="https://example.com/your-photo.jpg"
+                      />
                     </div>
                   )}
                 </div>

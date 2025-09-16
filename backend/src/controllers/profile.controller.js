@@ -2,7 +2,7 @@ import User from "../models/User.js";
 
 export async function getProfile(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const user = await User.findById(userId).select("-password");
     
     if (!user) {
@@ -18,7 +18,7 @@ export async function getProfile(req, res) {
 
 export async function updateProfile(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { fullName, bio, nativeLang, learningLang, location, profilePic } = req.body;
 
     // Validate required fields
@@ -58,7 +58,7 @@ export async function updateProfile(req, res) {
 
 export async function uploadProfilePicture(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { profilePic } = req.body;
 
     if (!profilePic) {
