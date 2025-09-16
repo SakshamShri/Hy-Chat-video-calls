@@ -45,19 +45,6 @@ const MeetDeveloperPage = () => {
                 </p>
               </div>
 
-              {/* Skills */}
-              <div className="space-y-3 mt-4 sm:mt-6">
-                <h3 className="text-lg sm:text-xl font-semibold">Skills</h3>
-                <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  <div className="badge badge-secondary badge-sm sm:badge-md">React.js</div>
-                  <div className="badge badge-secondary badge-sm sm:badge-md">Node.js</div>
-                  <div className="badge badge-secondary badge-sm sm:badge-md">MongoDB</div>
-                  <div className="badge badge-secondary badge-sm sm:badge-md">Express.js</div>
-                  <div className="badge badge-secondary badge-sm sm:badge-md">JavaScript</div>
-                  <div className="badge badge-secondary badge-sm sm:badge-md">Stream Chat</div>
-                  <div className="badge badge-secondary badge-sm sm:badge-md">Tailwind CSS</div>
-                </div>
-              </div>
             </div>
           </div>
 
